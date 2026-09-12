@@ -1,0 +1,45 @@
+@import "./pixel.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: "Quicksand", sans-serif;
+  background-color: #fff6ea;
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(255, 182, 198, 0.35) 0, transparent 45%),
+    radial-gradient(circle at 85% 15%, rgba(174, 223, 247, 0.35) 0, transparent 45%),
+    radial-gradient(circle at 50% 90%, rgba(184, 232, 212, 0.35) 0, transparent 45%);
+  color: #4a3b32;
+  image-rendering: pixelated;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: #f4c95d;
+  color: #4a3b32;
+}
+
+/* thin cute scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #fff0dc;
+}
+::-webkit-scrollbar-thumb {
+  background: #ffb5c6;
+  border: 2px solid #4a3b32;
+}

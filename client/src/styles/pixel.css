@@ -1,0 +1,282 @@
+/* =========================================================
+   letter.com — pixel-art UI kit
+   Chunky borders + stepped box-shadows fake a "pixelated"
+   3D look without needing actual pixel-art image assets.
+   Inspired by the tactile, high-contrast button style you
+   see across Uiverse.io's pixel/8-bit button snippets.
+   ========================================================= */
+
+:root {
+  --ink: #4a3b32;
+  --cream: #fff6ea;
+  --parchment: #fff0dc;
+}
+
+/* ---------- Pixel border helper ----------
+   A stepped border made of solid box-shadows,
+   like a blown-up sprite outline. */
+.pixel-border {
+  border: 3px solid var(--ink);
+  box-shadow:
+    0 0 0 2px var(--cream),
+    0 0 0 5px var(--ink);
+  border-radius: 2px;
+}
+
+.pixel-corners {
+  clip-path: polygon(
+    0 8px, 8px 8px, 8px 0,
+    calc(100% - 8px) 0, calc(100% - 8px) 8px, 100% 8px,
+    100% calc(100% - 8px), calc(100% - 8px) calc(100% - 8px), calc(100% - 8px) 100%,
+    8px 100%, 8px calc(100% - 8px), 0 calc(100% - 8px)
+  );
+}
+
+/* ---------- Pixel Button ----------
+   Chunky 8-bit button: sits "up" on a solid shadow block,
+   physically depresses on press by moving into its own shadow. */
+.pixel-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: "Press Start 2P", monospace;
+  font-size: 0.75rem;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  background: #f4c95d;
+  border: 3px solid var(--ink);
+  padding: 14px 22px;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: 5px 5px 0 0 var(--ink);
+  transform: translate(0, 0);
+  transition: transform 90ms ease, box-shadow 90ms ease, background 150ms ease;
+  image-rendering: pixelated;
+}
+
+.pixel-btn:hover {
+  background: #ffd76a;
+}
+
+.pixel-btn:active,
+.pixel-btn.is-pressed {
+  transform: translate(4px, 4px);
+  box-shadow: 1px 1px 0 0 var(--ink);
+}
+
+.pixel-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: translate(0, 0);
+  box-shadow: 5px 5px 0 0 var(--ink);
+}
+
+.pixel-btn.pixel-btn-pink {
+  background: #ffb5c6;
+}
+.pixel-btn.pixel-btn-pink:hover {
+  background: #ffc7d6;
+}
+
+.pixel-btn.pixel-btn-mint {
+  background: #b8e8d4;
+}
+.pixel-btn.pixel-btn-mint:hover {
+  background: #cdf0e2;
+}
+
+.pixel-btn.pixel-btn-sky {
+  background: #aedff7;
+}
+.pixel-btn.pixel-btn-sky:hover {
+  background: #c4e9fa;
+}
+
+.pixel-btn.pixel-btn-ghost {
+  background: var(--cream);
+}
+
+/* small square icon-only pixel button */
+.pixel-btn-icon {
+  padding: 10px;
+  font-size: 1rem;
+}
+
+/* ---------- Pixel Input ---------- */
+.pixel-input {
+  font-family: "Quicksand", sans-serif;
+  font-weight: 600;
+  background: var(--cream);
+  border: 3px solid var(--ink);
+  box-shadow: 3px 3px 0 0 var(--ink);
+  padding: 12px 14px;
+  color: var(--ink);
+  outline: none;
+  transition: transform 90ms ease, box-shadow 90ms ease;
+}
+
+.pixel-input:focus {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0 0 var(--ink);
+}
+
+.pixel-input::placeholder {
+  color: #a89787;
+}
+
+/* ---------- Floating pixel card ---------- */
+.pixel-card {
+  background: var(--cream);
+  border: 3px solid var(--ink);
+  box-shadow: 6px 6px 0 0 var(--ink);
+  animation: pixel-float 4s ease-in-out infinite;
+}
+
+@keyframes pixel-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+/* ---------- Pixel loader (bouncing stamp dots) ---------- */
+.pixel-loader {
+  display: flex;
+  gap: 6px;
+  align-items: flex-end;
+}
+.pixel-loader span {
+  width: 10px;
+  height: 10px;
+  background: var(--ink);
+  animation: pixel-bounce 0.9s infinite ease-in-out;
+}
+.pixel-loader span:nth-child(2) { animation-delay: 0.12s; background: #ffb5c6; }
+.pixel-loader span:nth-child(3) { animation-delay: 0.24s; background: #aedff7; }
+.pixel-loader span:nth-child(4) { animation-delay: 0.36s; background: #b8e8d4; }
+
+@keyframes pixel-bounce {
+  0%, 60%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-10px); }
+}
+
+/* =========================================================
+   Envelope
+   Built from stacked divs rather than an image so it can be
+   restyled per-recipient and animated piece by piece with
+   Framer Motion (flap / body / back-flap / seal all separate
+   layers here).
+   ========================================================= */
+
+.envelope-scene {
+  position: relative;
+  width: 260px;
+  height: 180px;
+  margin: 0 auto;
+}
+
+.envelope-back {
+  position: absolute;
+  inset: 0;
+  background: #ffe1ee;
+  border: 3px solid var(--ink);
+  box-shadow: 6px 6px 0 0 var(--ink);
+}
+
+/* the pocket triangle behind the flap, always visible */
+.envelope-pocket {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.envelope-pocket::before,
+.envelope-pocket::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+.envelope-pocket::before {
+  left: 0;
+  border-width: 0 0 90px 130px;
+  border-color: transparent transparent #ffcfe1 transparent;
+}
+.envelope-pocket::after {
+  right: 0;
+  border-width: 0 130px 90px 0;
+  border-color: transparent transparent #ffcfe1 transparent;
+}
+
+.envelope-flap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform-origin: top center;
+  clip-path: polygon(0 0, 100% 0, 50% 62%);
+  background: #ffb5c6;
+  border-top: 3px solid var(--ink);
+  z-index: 5;
+}
+
+.envelope-seal {
+  position: absolute;
+  top: 42%;
+  left: 50%;
+  width: 34px;
+  height: 34px;
+  transform: translate(-50%, -50%);
+  background: #e0536f;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  z-index: 6;
+}
+
+/* ---------- Letter paper ---------- */
+.letter-paper {
+  background: repeating-linear-gradient(
+    var(--parchment),
+    var(--parchment) 27px,
+    #f3dfc4 28px
+  );
+  border: 3px solid var(--ink);
+  box-shadow: 6px 6px 0 0 var(--ink);
+}
+
+.letter-paper textarea {
+  font-family: "Patrick Hand", cursive;
+  font-size: 1.15rem;
+  line-height: 28px;
+  color: var(--ink);
+  background: transparent;
+  border: none;
+  outline: none;
+  resize: none;
+  width: 100%;
+  height: 100%;
+}
+
+/* pixel stamp swatch (paper airplane on send) */
+.paper-plane {
+  filter: drop-shadow(3px 3px 0 var(--ink));
+}
+
+/* ---------- Toast ---------- */
+.pixel-toast {
+  font-family: "Press Start 2P", monospace;
+  font-size: 0.65rem;
+  background: var(--ink);
+  color: var(--cream);
+  border: 3px solid var(--ink);
+  box-shadow: 4px 4px 0 0 rgba(74, 59, 50, 0.4);
+  padding: 12px 16px;
+}

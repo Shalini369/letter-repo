@@ -1,0 +1,42 @@
+{
+  "users": [
+    {
+      "id": "t-Twqv5gZiYAb8uhpL7YD",
+      "username": "alice_cloud",
+      "displayName": "Alice Cloud ☁️",
+      "passwordHash": "$2a$10$yaYNozHZCfZho.b24JAW8uZdn4GlIerRnJtzdW905ye5kJ2n8hMlW",
+      "avatarColor": "#FFB5C6",
+      "createdAt": "2026-08-14T14:41:31.858Z"
+    },
+    {
+      "id": "uxqRY6CWfst8kDi7mavNk",
+      "username": "bob_star",
+      "displayName": "Bob Star ✨",
+      "passwordHash": "$2a$10$awws1jrIwAXHxCYjnaNy7.ymDEbQDUEkW3g3D6ZrWoUcrrMIYuW6u",
+      "avatarColor": "#F4C95D",
+      "createdAt": "2026-08-14T14:41:32.036Z"
+    }
+  ],
+  "letters": [
+    {
+      "id": "TOiquDHcYup2jsyWznHJ8",
+      "fromUsername": "alice_cloud",
+      "toUsername": "bob_star",
+      "body": "Hello Bob! So happy to connect with you on Letter.com 💌. Hope you enjoy receiving virtual animated letters!",
+      "stamp": "heart",
+      "paperColor": "#FFF6EA",
+      "read": true,
+      "createdAt": "2026-08-14T14:41:49.542Z"
+    },
+    {
+      "id": "K7vdxEETyeowBvnGpeOtq",
+      "fromUsername": "alice_cloud",
+      "toUsername": "bob_star",
+      "body": "HAAIIIIYYYYYEEEEEE\nHow are you doinggggg. I LOVE YOU SOO MUCHHHH ❤️I miss you so much. I REALLY WANT TO MEET YOU. I don't like ldr but I think I can do it because it's YOU. lots of love. Mwahhhh 💛",
+      "stamp": "star",
+      "paperColor": "#E7F6EE",
+      "read": true,
+      "createdAt": "2026-08-14T14:49:05.081Z"
+    }
+  ]
+}
