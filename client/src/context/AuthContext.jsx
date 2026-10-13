@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { api } from "../api";
+import { api, getToken, setToken, clearToken } from "../api";
 
 const AuthContext = createContext(null);
 
@@ -8,30 +8,37 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("letter_token");
+    const token = getToken();
     if (!token) {
       setLoading(false);
       return;
     }
     api
       .me()
-      .then(({ user }) => setUser(user))
-      .catch(() => localStorage.removeItem("letter_token"))
+      .then(({ user }) => {
+        // Ensure token is safely locked to this tab's sessionStorage
+        setToken(token);
+        setUser(user);
+      })
+      .catch(() => {
+        clearToken();
+        setUser(null);
+      })
       .finally(() => setLoading(false));
   }, []);
 
   function login(token, user) {
-    localStorage.setItem("letter_token", token);
+    setToken(token);
     setUser(user);
   }
 
   function logout() {
-    localStorage.removeItem("letter_token");
+    clearToken();
     setUser(null);
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, setUser }}>
       {children}
     </AuthContext.Provider>
   );

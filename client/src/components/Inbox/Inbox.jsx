@@ -11,13 +11,19 @@ export default function Inbox() {
   useEffect(() => {
     api
       .inbox()
-      .then(({ letters }) => setLetters(letters))
+      .then(({ letters }) => setLetters(letters || []))
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
   }, []);
 
   function markLocalRead(id) {
-    setLetters((prev) => prev.map((l) => (l.id === id ? { ...l, read: true } : l)));
+    setLetters((prev) =>
+      prev.map((l) => ((l.id || l._id) === id ? { ...l, read: true } : l))
+    );
+  }
+
+  function handleLocalDelete(id) {
+    setLetters((prev) => prev.filter((l) => (l.id || l._id) !== id));
   }
 
   return (
@@ -52,7 +58,12 @@ export default function Inbox() {
 
       <div className="flex flex-col gap-4">
         {letters.map((letter) => (
-          <LetterCard key={letter.id} letter={letter} onRead={markLocalRead} />
+          <LetterCard
+            key={letter.id || letter._id}
+            letter={letter}
+            onRead={markLocalRead}
+            onDelete={handleLocalDelete}
+          />
         ))}
       </div>
     </div>

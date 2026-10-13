@@ -1,35 +1,50 @@
-// Simple file-backed database for the MVP.
-// For production, swap this out for MongoDB (models/*.js are already
-// shaped like Mongoose schemas so the migration is mostly a find/replace).
-import { Low } from "lowdb";
-import { JSONFile } from "lowdb/node";
-import path from "path";
-import fs from "fs";
-import os from "os";
-import { fileURLToPath } from "url";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const localFile = path.join(__dirname, "db.json");
+dotenv.config();
 
-let file = localFile;
-if (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME) {
-  const tmpFile = path.join(os.tmpdir(), "db.json");
-  if (!fs.existsSync(tmpFile) && fs.existsSync(localFile)) {
-    try {
-      fs.copyFileSync(localFile, tmpFile);
-    } catch (e) {
-      console.warn("Could not copy initial db.json to /tmp:", e);
-    }
+const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/letter-com";
+
+let cached = global.mongoose;
+
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null };
+}
+
+export async function connectDB() {
+  if (cached.conn && mongoose.connection.readyState === 1) {
+    return cached.conn;
   }
-  file = tmpFile;
+
+  if (!cached.promise) {
+    const opts = {
+      bufferCommands: false,
+    };
+
+    cached.promise = mongoose
+      .connect(MONGO_URI, opts)
+      .then((mongooseInstance) => {
+        const maskedUri = MONGO_URI.includes("@")
+          ? MONGO_URI.replace(/:([^:@]+)@/, ":****@")
+          : MONGO_URI;
+        console.log(`🍃 Connected to MongoDB (${maskedUri})`);
+        return mongooseInstance;
+      })
+      .catch((err) => {
+        cached.promise = null;
+        console.error("❌ MongoDB connection error:", err.message);
+        throw err;
+      });
+  }
+
+  try {
+    cached.conn = await cached.promise;
+  } catch (e) {
+    cached.promise = null;
+    throw e;
+  }
+
+  return cached.conn;
 }
 
-const defaultData = { users: [], letters: [] };
-const adapter = new JSONFile(file);
-export const db = new Low(adapter, defaultData);
-
-export async function initDB() {
-  await db.read();
-  db.data ||= defaultData;
-  await db.write();
-}
+export const initDB = connectDB;

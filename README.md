@@ -24,7 +24,9 @@ letter-com/
 │           ├── UI/
 │           │   ├── PixelButton.jsx
 │           │   └── PixelCard.jsx
-│           ├── Nav/Navbar.jsx
+│           ├── Nav/
+│           │   ├── Navbar.jsx
+│           │   └── ProfileDrawer.jsx # ⭐ profile drawer with inbox, sent history & delete
 │           ├── Auth/
 │           │   ├── Login.jsx
 │           │   └── Signup.jsx
@@ -38,15 +40,15 @@ letter-com/
 │
 └── server/                      # Node + Express backend
     ├── index.js
-    ├── data/db.js                # lowdb JSON file store (swap for Mongo/Postgres later)
+    ├── data/db.js                # MongoDB connection with Mongoose & serverless caching
     ├── middleware/auth.js        # JWT verification
     ├── models/
-    │   ├── User.js
-    │   └── Letter.js
+    │   ├── User.js              # Mongoose User schema (username, password, timestamp)
+    │   └── Letter.js            # Mongoose Letter schema (sender, recipient, content, timestamp)
     └── routes/
         ├── auth.js               # signup, login, /me, username availability
         ├── users.js               # recipient lookup
-        └── letters.js             # send / inbox / sent / mark read
+        └── letters.js             # send, inbox, sent history, read, delete
 ```
 
 ## Running it locally
@@ -93,8 +95,22 @@ Defined in `tailwind.config.js` and `pixel.css`:
 - **Type**: `Press Start 2P` for pixel headings/buttons, `Patrick Hand` for handwritten letter text, `Quicksand` for UI body copy.
 - **Signature interaction**: the `.pixel-btn` class — a chunky button that sits on a solid offset shadow and physically depresses into that shadow on press/tap, the same tactile trick used by popular Uiverse.io 8-bit button snippets.
 
-## Notes for productionizing
+## Environment Variables & Deployment
 
-- Swap `lowdb` (`server/data/db.js`) for MongoDB/Postgres — the `models/` files are already shaped for an easy migration.
-- Add rate limiting + input sanitization on the Express routes before deploying publicly.
-- Consider WebSockets (or polling) on `/inbox` for real-time "new letter" notifications.
+### Server `.env`
+Add the following to `server/.env`:
+```env
+PORT=4000
+JWT_SECRET=your-secure-jwt-secret
+MONGO_URI=mongodb://127.0.0.1:27017/letter-com
+```
+*(For MongoDB Atlas, replace `MONGO_URI` with your connection string: `mongodb+srv://<user>:<password>@cluster.mongodb.net/letter-com?retryWrites=true&w=majority`)*
+
+### Vercel Settings
+In your Vercel project dashboard under **Settings → Environment Variables**, add:
+1. `MONGO_URI`: Your MongoDB Atlas connection URI.
+2. `JWT_SECRET`: A long random secret string.
+
+### Multi-Tab Session Isolation
+Client sessions are scoped via `sessionStorage`. This allows opening multiple tabs in the same browser to log into different accounts (e.g., Alice and Bob) simultaneously without session overwrites or conflicts.
+

@@ -1,7 +1,34 @@
 const BASE = import.meta.env.VITE_API_URL || "/api";
 
+export function getToken() {
+  try {
+    return sessionStorage.getItem("letter_token") || localStorage.getItem("letter_token");
+  } catch {
+    return null;
+  }
+}
+
+export function setToken(token) {
+  try {
+    sessionStorage.setItem("letter_token", token);
+    // Remove from localStorage to prevent cross-tab leaks
+    localStorage.removeItem("letter_token");
+  } catch {
+    /* ignore */
+  }
+}
+
+export function clearToken() {
+  try {
+    sessionStorage.removeItem("letter_token");
+    localStorage.removeItem("letter_token");
+  } catch {
+    /* ignore */
+  }
+}
+
 function authHeaders() {
-  const token = localStorage.getItem("letter_token");
+  const token = getToken();
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
@@ -32,4 +59,5 @@ export const api = {
   inbox: () => request("/letters/inbox"),
   sent: () => request("/letters/sent"),
   markRead: (id) => request(`/letters/${id}/read`, { method: "PATCH" }),
+  deleteLetter: (id) => request(`/letters/${id}`, { method: "DELETE" }),
 };
